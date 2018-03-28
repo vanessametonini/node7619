@@ -1,15 +1,18 @@
 const pool = require('../db/pool')
 
 function LivrosDAO() {
-    this.conexao = pool.getConnection()
+
+    //const this = LivrosDAO.prototype
+    
+    this._conexao = pool.getConnection()
 }
 
 LivrosDAO.prototype.listar =  function(callback) {
-    this.conexao.query('SELECT * FROM livros', callback)    
+    this._conexao.query('SELECT * FROM livros', callback)    
 }
 
-LivrosDAO.prototype.cadastrar = function (callback) {
-    //conexao.query('', callback)
+LivrosDAO.prototype.cadastrar = function (livro, callback) {
+    this._conexao.query('INSERT INTO livros SET ?', livro, callback)
 }
 
 module.exports = LivrosDAO
