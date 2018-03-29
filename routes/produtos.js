@@ -4,18 +4,20 @@ module.exports = servidor => {
 
         request.livrosService.listar(function (erro, resultado) {
 
-            if (erro) {
-                next(erro)
-            }
+            if (erro) next(erro)
             else {
-                response.render('produtos/lista.ejs', {
-                    livros: resultado || [],
-                    msgErro: erro
+                response.format({
+                    html: () => {
+                        response.render('produtos/lista.ejs', {
+                            livros: resultado || [],
+                            msgErro: erro
+                        })
+                    }
+                    ,json: () => response.send(resultado)
                 })
             }
 
         })        
-        
     })
 
     servidor.get('/produtos/cadastra', function(request, response) {
@@ -31,11 +33,9 @@ module.exports = servidor => {
 
         request.livrosService.cadastrar(livro, function(erro) {
             
-            if(erro){
-                next(erro)
-            } else {
-                response.redirect('/')
-            }
+            erro 
+            ? next(erro) 
+            : response.redirect('/')
             
         })
         
