@@ -12,7 +12,7 @@ LivrosDAO.prototype.listar =  function(callback) {
 }
 
 LivrosDAO.prototype.cadastrar = function (livro, callback) {
-    this._conexao.query('INSERT INTO livros SET ?', livro, callback)
+    this._conexao.query('INSERT INTO Livros SET ?', livro, callback)
 }
 
 module.exports = LivrosDAO

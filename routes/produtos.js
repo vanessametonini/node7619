@@ -1,18 +1,11 @@
-const LivrosDAO = require('../db/livrosDAO')
-const queryString = require('query-string')
-
 module.exports = servidor => {
 
-    servidor.get('/', function (request, response) {
+    servidor.get('/', function (request, response, next) {
 
-        let livrosService = new LivrosDAO()
-
-        livrosService.listar(function (erro, resultado) {
+        request.livrosService.listar(function (erro, resultado) {
 
             if (erro) {
-                response.render('erros/500.ejs', {
-                    msgErro: erro
-                })
+                next(erro)
             }
             else {
                 response.render('produtos/lista.ejs', {
@@ -32,23 +25,19 @@ module.exports = servidor => {
         })
     })
 
-    servidor.post('/produtos', function (request, response) {
-        
-        let dadosString = ''
+    servidor.post('/produtos', function (request, response, next) {
 
-        request.on('data', function(chunk){
-            dadosString += chunk.toString()
-        })
+        livro = request.body
 
-        request.on('end', function(){
-            const livro = queryString.parse(dadosString)
-
-            let livrosService = new LivrosDAO()
-
-            livrosService.cadastrar(livro, function() {
+        request.livrosService.cadastrar(livro, function(erro) {
+            
+            if(erro){
+                next(erro)
+            } else {
                 response.redirect('/')
-            })
-
+            }
+            
         })
+        
     })
 }

@@ -1,13 +1,29 @@
-const express = require('express')
+const express = require('express'),
+      server = express(),
+      LivrosDAO = require('./db/livrosDAO')
+    
+server.set('view engine', 'ejs')
 
-module.exports = function(){
-    let app = express()
-    
-    app.use(express.static('public'))
-    app.set('view engine', 'ejs')
-    
-    require('./routes/produtos')(app)
+server.use(express.urlencoded())
+server.use(express.static('public'))
 
-    return app
-    
-}
+server.use(function(request, response, next){
+    request.livrosService = new LivrosDAO()    
+    next()
+})
+require('./routes/produtos')(server)
+
+//middleware para tratar os erros Cap8
+//https://github.com/ericelliott/express-error-handler
+server.use(function (erro, request, response, next) {
+    response.render('erros/500', {erro})
+})
+
+server.use(function (request, response, next) {
+    response.render('erros/500', { erro: 'Erro 404' })
+})
+
+module.exports = server
+
+//next() vai pro use de 3 parametros
+//next(algo) vai pro use de 4 parametros
