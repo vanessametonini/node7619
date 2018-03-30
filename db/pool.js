@@ -7,7 +7,8 @@ module.exports = {
             host: 'localhost',
             user: 'root',
             password: '',
-            database: 'casadocodigo'
+            database: 'casadocodigo',
+            port: process.env.DB_PORT
         })
         return conexao
     }
