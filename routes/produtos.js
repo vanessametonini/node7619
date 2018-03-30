@@ -36,18 +36,19 @@ module.exports = servidor => {
         request.assert('preco', "Preço vazio").notEmpty()
         request.assert('preco', "Preço deve ser um número").isNumeric()
 
-        request.asyncValidationErrors().then(() => {
-            request.livrosService.cadastrar(
-                livro
-                , erro => erro ? next(erro) : response.redirect('/')
+        request.asyncValidationErrors()
+            .then(
+                () => request.livrosService.cadastrar(livro)
             )
-        })
-        .catch(erros => {
-            response.render('produtos/form.ejs', {
-                validationErrors: erros
-                , livro: livro
-            })
-        })  
-        .catch(next)
+            .then(
+                erro => erro ? next(erro) : response.redirect('/')
+            )
+            .catch(erros => {
+                response.render('produtos/form.ejs', {
+                    validationErrors: erros
+                    , livro: livro
+                })
+            })  
+            .catch(next)
     })
 }
