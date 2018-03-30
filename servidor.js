@@ -1,12 +1,14 @@
 const express = require('express'),
       server = express(),
-      LivrosDAO = require('./db/livrosDAO')
+      LivrosDAO = require('./db/livrosDAO'),
+      expressValidator = require('express-validator')
     
 server.set('view engine', 'ejs')
 
 server.use(express.urlencoded())
 server.use(express.json())
 server.use(express.static('public'))
+server.use(expressValidator())
 
 server.use(function(request, response, next){
     request.livrosService = new LivrosDAO()    

@@ -24,20 +24,30 @@ module.exports = servidor => {
 
         response.render('produtos/form.ejs', {
             validationErrors: []
+            ,livro: {}
         })
     })
 
     servidor.post('/produtos', function (request, response, next) {
 
-        livro = request.body
+        let livro = request.body
 
-        request.livrosService.cadastrar(livro, function(erro) {
-            
-            erro 
-            ? next(erro) 
-            : response.redirect('/')
-            
+        request.assert('titulo', "Titulo vazio").notEmpty()
+        request.assert('preco', "Preço vazio").notEmpty()
+        request.assert('preco', "Preço deve ser um número").isNumeric()
+
+        request.asyncValidationErrors().then(() => {
+            request.livrosService.cadastrar(
+                livro
+                , erro => erro ? next(erro) : response.redirect('/')
+            )
         })
-        
+        .catch(erros => {
+            response.render('produtos/form.ejs', {
+                validationErrors: erros
+                , livro: livro
+            })
+        })  
+        .catch(next)
     })
 }
